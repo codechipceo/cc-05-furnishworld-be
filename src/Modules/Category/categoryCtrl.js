@@ -1,7 +1,7 @@
-const CustomError = require("../../Errors/CustomError");
-const successResponse = require("../../Utils/apiResponse");
-const asyncHandler = require("../../Utils/asyncHandler");
-const CategoryService = require("./categoryService");
+const CustomError = require("../../Errors/CustomError.js");
+const successResponse = require("../../Utils/apiResponse.js");
+const asyncHandler = require("../../Utils/asyncHandler.js");
+const CategoryService = require("./categoryService.js");
 
 const categoryCtrl = {
   create: asyncHandler(async (req, res, next) => {

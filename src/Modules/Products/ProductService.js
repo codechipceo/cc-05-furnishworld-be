@@ -1,25 +1,31 @@
-const DbService = require("../../Service/DbService");
-const fileUploadUtil = require("../../Utils/fileUpload");
-const serviceHandler = require("../../Utils/serviceHandler");
-const ProductsModel = require("./ProductModel");
+const DbService = require("../../Service/DbService.js");
+const fileUploadUtil = require("../../Utils/fileUpload.js");
+const serviceHandler = require("../../Utils/serviceHandler.js");
+const ProductsModel = require("./ProductModel.js");
+const shortUUID = require("short-uuid");
+
 
 const model = new DbService(ProductsModel);
 
 const productService = {
   create: serviceHandler(async (data) => {
+  const shortId = shortUUID.generate();
+
     const files = data.files;
 
-    const images =await Promise.all( files.map(async (img, i) => {
-      const imageUrl = await fileUploadUtil(img, 'products');
-      const imgObj = {
-        imageId: i,
-        imageUrl,
-      };
-      return imgObj
-    }))
+    const images = await Promise.all(
+      files.map(async (img, i) => {
+        const imageUrl = await fileUploadUtil(img, "products");
+        const imgObj = {
+          imageId: shortId,
+          imageUrl,
+        };
+        return imgObj;
+      })
+    );
 
-    console.log(images)
-    data.productImages = images
+    console.log(images);
+    data.productImages = images;
 
     return await model.save(data);
   }),
@@ -31,18 +37,26 @@ const productService = {
   }),
 
   getAll: serviceHandler(async (data) => {
+    const { categoryId } = data
+
+    console.log(categoryId)
     const query = {};
+    if (categoryId) {
+      query.categoryId ={$in : [categoryId]}
+    }
     const updatedData = {
       ...data,
-     populate:[{path:"categoryId"}]
+      populate: [{ path: "categoryId" }],
     };
     const savedData = await model.getAllDocuments(query, updatedData);
-    const totalCount = await model.totalCounts({ isDelete: false });
+    const totalCount = await model.totalCounts(query);
+
+    console.log(totalCount)
     return { savedData, totalCount };
   }),
   getById: serviceHandler(async (dataId) => {
     const { productId } = dataId;
-    const query = { isDelete: false, _id: productId };
+    const query = { _id: productId };
     const savedDataById = await model.getDocumentById(query);
     return savedDataById;
   }),

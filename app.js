@@ -1,9 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const GlobalErrorHandler = require("./src/Errors/GlobalError");
-const { adminRouter, userRouter } = require("./src/indexRouter");
-const CustomError = require("./src/Errors/CustomError");
+const GlobalErrorHandler = require("./src/Errors/GlobalError.js");
+const { adminRouter, userRouter } = require("./src/indexRouter.js");
+const CustomError = require("./src/Errors/CustomError.js");
 const fileUpload = require('express-fileupload')
 
 const app = express();

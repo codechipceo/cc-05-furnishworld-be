@@ -1,4 +1,4 @@
-const productCtrl = require("./ProductCtrl");
+const productCtrl = require("./ProductCtrl.js");
 
 const productRouter = require("express").Router();
 

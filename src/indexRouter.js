@@ -1,9 +1,9 @@
-const { categoryRouter } = require('./Modules/Category/categoryRouter')
-const orderRouter = require('./Modules/Order/orderRouter')
-const productRouter = require('./Modules/Products/ProductRouter')
-const { roleRouter } = require('./Modules/Roles/roleRouter')
-const subcategoryRouter = require('./Modules/SubCategory/subcategoryRouter')
-const { userAdminRouter } = require('./Modules/User/userRouter')
+const { categoryRouter } = require('./Modules/Category/categoryRouter.js')
+const orderRouter = require('./Modules/Order/orderRouter.js')
+const productRouter = require('./Modules/Products/ProductRouter.js')
+const { roleRouter } = require('./Modules/Roles/roleRouter.js')
+const subcategoryRouter = require('./Modules/SubCategory/subcategoryRouter.js')
+const { userAdminRouter } = require('./Modules/User/userRouter.js')
 
 
 const adminRouter = require('express').Router()

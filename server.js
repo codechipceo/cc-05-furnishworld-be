@@ -1,6 +1,6 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const app = require("./app");
+const app = require("./app.js");
 
 // Shut down server if Uncaught Exception occurs
 

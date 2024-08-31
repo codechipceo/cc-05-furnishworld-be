@@ -1,6 +1,6 @@
-const asyncHandler = require("../../Utils/asyncHandler");
-const productService = require("./ProductService");
-const successResponse = require("../../Utils/apiResponse");
+const asyncHandler = require("../../Utils/asyncHandler.js");
+const productService = require("./ProductService.js");
+const successResponse = require("../../Utils/apiResponse.js");
 
 const productCtrl = {
   create: asyncHandler(async (req, res, next) => {

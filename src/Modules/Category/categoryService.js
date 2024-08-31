@@ -1,8 +1,8 @@
-const Category = require("./CategoryModel");
-const DbService = require("../../Service/DbService");
-const serviceHandler = require("../../Utils/serviceHandler");
-const CustomError = require("../../Errors/CustomError");
-const fileUploadUtil = require("../../Utils/fileUpload");
+const Category = require("./CategoryModel.js");
+const DbService = require("../../Service/DbService.js");
+const serviceHandler = require("../../Utils/serviceHandler.js");
+const CustomError = require("../../Errors/CustomError.js");
+const fileUploadUtil = require("../../Utils/fileUpload.js");
 const model = new DbService(Category);
 
 const categoryService = {

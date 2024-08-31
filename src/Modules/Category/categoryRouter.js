@@ -1,6 +1,6 @@
-const { verifyToken, checkAccess } = require('../../Utils/utils');
-const { categoryValidationSchema, validateRequestBody } = require('../../validators/Validation');
-const categoryCtrl = require('./categoryCtrl')
+const { verifyToken, checkAccess } = require('../../Utils/utils.js');
+const { categoryValidationSchema, validateRequestBody } = require('../../validators/Validation.js');
+const categoryCtrl = require('./categoryCtrl.js')
 
 const router = require('express').Router();
 
