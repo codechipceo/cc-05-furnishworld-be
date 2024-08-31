@@ -1,4 +1,4 @@
-const Category = require("./CategoryModel.js");
+const Category = require("./categoryModel.js");
 const DbService = require("../../Service/DbService.js");
 const serviceHandler = require("../../Utils/serviceHandler.js");
 const CustomError = require("../../Errors/CustomError.js");
