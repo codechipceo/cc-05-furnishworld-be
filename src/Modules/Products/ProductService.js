@@ -4,29 +4,34 @@ const serviceHandler = require("../../Utils/serviceHandler.js");
 const ProductsModel = require("./ProductModel.js");
 const shortUUID = require("short-uuid");
 
-
 const model = new DbService(ProductsModel);
 
 const productService = {
   create: serviceHandler(async (data) => {
-  const shortId = shortUUID.generate();
-
+    const shortId = shortUUID.generate();
+    let images;
     const files = data.files;
-
-    const images = await Promise.all(
-      files.map(async (img, i) => {
-        const imageUrl = await fileUploadUtil(img, "products");
-        const imgObj = {
+    if (Array.isArray(files)) {
+      images = await Promise.all(
+        files.map(async (img) => {
+          const imageUrl = await fileUploadUtil(img, "products");
+          const imgObj = {
+            imageId: shortId,
+            imageUrl,
+          };
+          return imgObj;
+        })
+      );
+      data.productImages = images;
+    } else {
+      const imageUrl = await fileUploadUtil(files, "products");
+      data.productImages = [
+        {
           imageId: shortId,
           imageUrl,
-        };
-        return imgObj;
-      })
-    );
-
-    console.log(images);
-    data.productImages = images;
-
+        },
+      ];
+    }
     return await model.save(data);
   }),
 
@@ -37,12 +42,12 @@ const productService = {
   }),
 
   getAll: serviceHandler(async (data) => {
-    const { categoryId } = data
+    const { categoryId } = data;
 
-    console.log(categoryId)
+    console.log(categoryId);
     const query = {};
     if (categoryId) {
-      query.categoryId ={$in : [categoryId]}
+      query.categoryId = { $in: [categoryId] };
     }
     const updatedData = {
       ...data,
@@ -51,7 +56,7 @@ const productService = {
     const savedData = await model.getAllDocuments(query, updatedData);
     const totalCount = await model.totalCounts(query);
 
-    console.log(totalCount)
+    console.log(totalCount);
     return { savedData, totalCount };
   }),
   getById: serviceHandler(async (dataId) => {
@@ -69,11 +74,8 @@ const productService = {
   }),
   delete: serviceHandler(async (deleteId) => {
     const { productId } = deleteId;
-    const deletedDoc = await model.updateDocument(
-      { _id: productId },
-      { isDelete: true }
-    );
-    return deletedDoc;
+    const result = await model.deleteDocument({ _id: productId });
+    return result;
   }),
 
   getBySubcategoryId: serviceHandler(async (subcategory) => {
