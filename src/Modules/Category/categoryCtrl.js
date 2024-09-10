@@ -6,7 +6,7 @@ const CategoryService = require("./categoryService.js");
 const categoryCtrl = {
   create: asyncHandler(async (req, res, next) => {
     const categoryDTO = req.body;
-    categoryDTO.files = req.files
+    categoryDTO.files = req.files;
 
     const savedCategory = await CategoryService.create(categoryDTO);
 
@@ -19,9 +19,7 @@ const categoryCtrl = {
 
   getAll: asyncHandler(async (req, res, next) => {
     const categoryDTO = req.body;
-    const { savedData, totalCount } = await CategoryService.getAll(
-      categoryDTO
-    );
+    const { savedData, totalCount } = await CategoryService.getAll(categoryDTO);
     return successResponse({
       res,
       data: savedData,
@@ -54,7 +52,7 @@ const categoryCtrl = {
       data: deletedDoc,
       msg: "category Deleted Successfully",
     });
-  })
+  }),
 };
 
 module.exports = categoryCtrl;
