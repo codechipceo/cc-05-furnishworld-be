@@ -15,8 +15,28 @@ const productCtrl = {
   }),
 
   updateImage: asyncHandler(async (req, res, next) => {
-    const productDTO = { ...req.body, files: req.files.productImages };
-    const savedData = await productService.updateImage(productDTO);
+    console.log(req.body);
+    const productImageDTO = {
+      files: req.files.image,
+      ...req.params,
+      ...req.body,
+    };
+
+    const savedData = await productService.updateImage(productImageDTO);
+
+    return successResponse({
+      res,
+      data: savedData,
+      msg: "Product Images Updated successfully",
+    });
+  }),
+
+  deleteImage: asyncHandler(async (req, res, next) => {
+    const productImageDTO = {
+      ...req.params,
+    };
+
+    const savedData = await productService.deleteImage(productImageDTO);
 
     return successResponse({
       res,
