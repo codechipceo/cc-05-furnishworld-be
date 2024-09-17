@@ -42,11 +42,14 @@ const productService = {
   }),
 
   getAll: serviceHandler(async (data) => {
-    const { categoryId } = data;
+    const { categoryId, saleStatus } = data;
 
     const query = {};
     if (categoryId) {
       query.categoryId = { $in: [categoryId] };
+    }
+    if (saleStatus) {
+      query.saleStatus = saleStatus;
     }
     const updatedData = {
       ...data,
@@ -66,6 +69,7 @@ const productService = {
 
   update: serviceHandler(async (updateData) => {
     const { productId } = updateData;
+
     let filter = { _id: productId };
 
     if (updateData.categoryId) {
@@ -73,6 +77,7 @@ const productService = {
     }
 
     const updatePayload = { ...updateData };
+
     await model.updateDocument(filter, updatePayload);
 
     const savedDataById = await model.getAllDocuments(filter, {
