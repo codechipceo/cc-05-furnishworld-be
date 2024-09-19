@@ -42,17 +42,23 @@ const productService = {
   }),
 
   getAll: serviceHandler(async (data) => {
-    const { categoryId } = data;
+    const { categoryId, sort, reqQuery } = data;
 
-    console.log(categoryId);
-    const query = {};
+    let query = {};
+    if (reqQuery) {
+      query = { ...reqQuery };
+    }
     if (categoryId) {
       query.categoryId = { $in: [categoryId] };
     }
+
     const updatedData = {
       ...data,
       populate: [{ path: "categoryId" }],
     };
+    if (sort) {
+      updatedData.sort = sort;
+    }
     const savedData = await model.getAllDocuments(query, updatedData);
     const totalCount = await model.totalCounts(query);
 
