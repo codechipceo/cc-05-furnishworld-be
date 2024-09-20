@@ -62,7 +62,6 @@ const productService = {
     const savedData = await model.getAllDocuments(query, updatedData);
     const totalCount = await model.totalCounts(query);
 
-    console.log(totalCount);
     return { savedData, totalCount };
   }),
   getById: serviceHandler(async (dataId) => {
@@ -71,13 +70,61 @@ const productService = {
     const savedDataById = await model.getDocumentById(query);
     return savedDataById;
   }),
+
   update: serviceHandler(async (updateData) => {
+    const { productId } = updateData;
+    let filter = { _id: productId };
+
+    if (updateData.categoryId) {
+      updateData.categoryId = updateData.categoryId.split(",");
+    }
+
+    const updatePayload = { ...updateData };
+    await model.updateDocument(filter, updatePayload);
+
+    const savedDataById = await model.getAllDocuments(filter, {
+      populate: [{ path: "categoryId" }],
+    });
+
+    return savedDataById;
+  }),
+
+  updateImage: serviceHandler(async (updateData) => {
+    const shortId = shortUUID.generate();
+    let images;
+    const files = updateData.files;
+    if (Array.isArray(files)) {
+      images = await Promise.all(
+        files.map(async (img) => {
+          const imageUrl = await fileUploadUtil(img, "products");
+          const imgObj = {
+            imageId: shortId,
+            imageUrl,
+          };
+          return imgObj;
+        })
+      );
+      updateData.productImages = images;
+    } else {
+      const imageUrl = await fileUploadUtil(files, "products");
+      updateData.productImages = [
+        {
+          imageId: shortId,
+          imageUrl,
+        },
+      ];
+    }
+
     const { productId } = updateData;
     const filter = { _id: productId };
     const updatePayload = { ...updateData };
-    const updatedDoc = await model.updateDocument(filter, updatePayload);
-    return updatedDoc;
+    await model.updateDocument(filter, updatePayload);
+    const savedDataById = await model.getAllDocuments(filter, {
+      populate: [{ path: "categoryId" }],
+    });
+    return savedDataById;
   }),
+
   delete: serviceHandler(async (deleteId) => {
     const { productId } = deleteId;
     const result = await model.deleteDocument({ _id: productId });

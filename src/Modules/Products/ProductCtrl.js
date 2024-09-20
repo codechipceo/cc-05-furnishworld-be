@@ -5,14 +5,23 @@ const successResponse = require("../../Utils/apiResponse.js");
 const productCtrl = {
   create: asyncHandler(async (req, res, next) => {
     const productDTO = { ...req.body, files: req.files.productImages };
-
-
-    const  savedData = await productService.create(productDTO);
+    const savedData = await productService.create(productDTO);
 
     return successResponse({
       res,
       data: savedData,
       msg: "Product created successfully",
+    });
+  }),
+
+  updateImage: asyncHandler(async (req, res, next) => {
+    const productDTO = { ...req.body, files: req.files.productImages };
+    const savedData = await productService.updateImage(productDTO);
+
+    return successResponse({
+      res,
+      data: savedData,
+      msg: "Product Images Updated successfully",
     });
   }),
 
@@ -38,7 +47,7 @@ const productCtrl = {
     const updatedDoc = await productService.update(docDTO);
     return successResponse({
       res,
-      data: updatedDoc,
+      data: updatedDoc[0],
       msg: "Updated Product successfully",
     });
   }),
