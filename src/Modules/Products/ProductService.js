@@ -42,7 +42,8 @@ const productService = {
   }),
 
   getAll: serviceHandler(async (data) => {
-    const { categoryId, sort, reqQuery } = data;
+    const { categoryId, sort, reqQuery, saleStatus } = data;
+ 
 
     let query = {};
     if (reqQuery) {
@@ -51,7 +52,9 @@ const productService = {
     if (categoryId) {
       query.categoryId = { $in: [categoryId] };
     }
-
+    if (saleStatus) {
+      query.saleStatus = saleStatus;
+    }
     const updatedData = {
       ...data,
       populate: [{ path: "categoryId" }],
@@ -73,6 +76,7 @@ const productService = {
 
   update: serviceHandler(async (updateData) => {
     const { productId } = updateData;
+
     let filter = { _id: productId };
 
     if (updateData.categoryId) {
@@ -80,6 +84,7 @@ const productService = {
     }
 
     const updatePayload = { ...updateData };
+
     await model.updateDocument(filter, updatePayload);
 
     const savedDataById = await model.getAllDocuments(filter, {
@@ -90,39 +95,48 @@ const productService = {
   }),
 
   updateImage: serviceHandler(async (updateData) => {
+    const query = { _id: updateData.productId };
+    const product = await model.getDocumentById(query);
+    const { files, imageId } = updateData;
+
     const shortId = shortUUID.generate();
-    let images;
-    const files = updateData.files;
-    if (Array.isArray(files)) {
-      images = await Promise.all(
-        files.map(async (img) => {
-          const imageUrl = await fileUploadUtil(img, "products");
-          const imgObj = {
-            imageId: shortId,
-            imageUrl,
-          };
-          return imgObj;
-        })
-      );
-      updateData.productImages = images;
-    } else {
-      const imageUrl = await fileUploadUtil(files, "products");
-      updateData.productImages = [
-        {
-          imageId: shortId,
-          imageUrl,
-        },
-      ];
+    if (files) {
+      if (Array.isArray(files)) {
+        images = await Promise.all(
+          files.map(async (img) => {
+            const imageUrl = await fileUploadUtil(img, "products");
+            const imgObj = {
+              imageId: shortId,
+              imageUrl,
+            };
+            return imgObj;
+          })
+        );
+        data.productImages = images;
+      } else {
+        const imageUrl = await fileUploadUtil(files, "products");
+        const image = product.productImages.find((img) => img._id === imageId);
+        if (image) {
+          image.imageUrl = imageUrl;
+        }
+      }
     }
 
-    const { productId } = updateData;
-    const filter = { _id: productId };
-    const updatePayload = { ...updateData };
-    await model.updateDocument(filter, updatePayload);
-    const savedDataById = await model.getAllDocuments(filter, {
-      populate: [{ path: "categoryId" }],
-    });
-    return savedDataById;
+    await product.save();
+    return product;
+  }),
+
+  deleteImage: serviceHandler(async (deleteData) => {
+    const { productId, imageId } = deleteData;
+    const query = { _id: productId };
+    const product = await model.getDocumentById(query);
+    if (product) {
+      product.productImages = product.productImages.filter(
+        (img) => img._id === imageId
+      );
+    }
+    await product.save();
+    return product;
   }),
 
   delete: serviceHandler(async (deleteId) => {
