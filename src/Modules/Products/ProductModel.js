@@ -39,19 +39,27 @@ const productSchema = new mongoose.Schema({
     default: 0,
   },
   categoryId: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category",
+      },
+    ],
+    salePrice: {
+      type: Number,
     },
-  ],
-  salePrice: {
-    type: Number,
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    isDeal: {
+      type: Boolean,
+      default: false,
+    },
   },
-  isActive: {
-    type: Boolean,
-    default: true,
-  },
-});
+  {
+    timestamps: true,
+  }
+);
 
 const Products = mongoose.model("Product", productSchema);
 
