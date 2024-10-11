@@ -41,8 +41,8 @@ const verifyToken = (req, res, next) => {
 const checkAccess = (requiredPermissions) => {
   return (req, res, next) => {
     const userPermissions = req.user.userId.permissions;
-    console.log(req.user)
-    
+
+
     const hasPermission = userPermissions.includes(requiredPermissions);
     if (!hasPermission) {
       return res.status(401).json({ msg: "Access Denied" });

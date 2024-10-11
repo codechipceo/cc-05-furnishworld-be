@@ -6,10 +6,20 @@ const fileUploadUtil = require("../../Utils/fileUpload.js");
 const model = new DbService(Category);
 
 const categoryService = {
-  create: serviceHandler(async (data) => {
+  updateCategoryImage: serviceHandler(async (data) => {
+    const { categoryId, image } = data;
 
-    const url = await fileUploadUtil(data?.files?.categoryImage, 'category');
-    data.categoryImage = url
+    const newCategoryUrl = await fileUploadUtil(image, "category");
+    const query = { _id: categoryId };
+    const updateQuery = {
+      $set: { categoryImage: newCategoryUrl },
+    };
+    return await model.updateDocument(query, updateQuery);
+  }),
+
+  create: serviceHandler(async (data) => {
+    const url = await fileUploadUtil(data?.files?.categoryImage, "category");
+    data.categoryImage = url;
     return await model.save(data);
   }),
 
@@ -26,20 +36,17 @@ const categoryService = {
     return savedDataById;
   }),
   update: serviceHandler(async (updateData) => {
-    const { categoryId , categoryTitle, categoryImage} = updateData;
+    const { categoryId, categoryTitle, categoryImage } = updateData;
     const filter = { _id: categoryId };
-    console.log(categoryTitle, categoryImage);
-    const updatePayload = {...updateData };
+
+    const updatePayload = { ...updateData };
     const updatedDoc = await model.updateDocument(filter, updatePayload);
-    console.log(updatedDoc)
+  
     return updatedDoc;
   }),
   delete: serviceHandler(async (deleteId) => {
     const { categoryId } = deleteId;
-    const deletedDoc = await model.deleteDocument(
-      { _id: categoryId },
-
-    );
+    const deletedDoc = await model.deleteDocument({ _id: categoryId });
     return deletedDoc;
   }),
 };

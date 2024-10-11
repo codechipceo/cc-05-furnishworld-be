@@ -43,7 +43,6 @@ const productService = {
 
   getAll: serviceHandler(async (data) => {
     const { categoryId, sort, reqQuery, saleStatus } = data;
- 
 
     let query = {};
     if (reqQuery) {
@@ -95,48 +94,34 @@ const productService = {
   }),
 
   updateImage: serviceHandler(async (updateData) => {
-    const query = { _id: updateData.productId };
-    const product = await model.getDocumentById(query);
-    const { files, imageId } = updateData;
 
-    const shortId = shortUUID.generate();
-    if (files) {
-      if (Array.isArray(files)) {
-        images = await Promise.all(
-          files.map(async (img) => {
-            const imageUrl = await fileUploadUtil(img, "products");
-            const imgObj = {
-              imageId: shortId,
-              imageUrl,
-            };
-            return imgObj;
-          })
-        );
-        data.productImages = images;
-      } else {
-        const imageUrl = await fileUploadUtil(files, "products");
-        const image = product.productImages.find((img) => img._id === imageId);
-        if (image) {
-          image.imageUrl = imageUrl;
-        }
-      }
+
+    const { productId, imageId, files } = updateData;
+    const newImageUrl = await fileUploadUtil(files, "products");
+
+    const query = { _id: productId, "productImages._id": imageId };
+    const updateQuery = {
+    $set: {
+      "productImages.$.imageUrl": newImageUrl,
+    },
+
     }
-
-    await product.save();
-    return product;
+    const  updatedProductImage = await model.updateDocument(query, updateQuery);
+    return updatedProductImage;
   }),
 
   deleteImage: serviceHandler(async (deleteData) => {
     const { productId, imageId } = deleteData;
     const query = { _id: productId };
-    const product = await model.getDocumentById(query);
-    if (product) {
-      product.productImages = product.productImages.filter(
-        (img) => img._id === imageId
-      );
-    }
-    await product.save();
-    return product;
+    const updateQuery =  {
+        $pull: {
+          productImages: { _id:imageId },
+        },
+      }
+
+    const updatedProduct = await model.updateDocument(query, updateQuery);
+
+    return updatedProduct;
   }),
 
   delete: serviceHandler(async (deleteId) => {

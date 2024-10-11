@@ -19,8 +19,7 @@ const userCtrl = {
   getAll: asyncHandler(async (req, res, next) => {
     const roleDTO = req.body;
     const{savedData,totalCount}=await UserService.getAll(roleDTO)
-   
-   console.log(savedData)
+  
     return successResponse({
      res,
     data:savedData,

@@ -19,7 +19,7 @@ const orderCtrl = {
   getAll: asyncHandler(async (req, res, next) => {
     const orderDTO = req.body;
     const { savedData, totalCount } = await orderService.getAll(orderDTO);
-    console.log(savedData)
+  
     return successResponse({
       res: res,
       data: savedData,

@@ -18,12 +18,12 @@ module.exports = class DatabaseService {
   };
   getAllDocuments = async (query, options = {}) => {
     const { limit, sort, skip, populate } = options;
-    const updatedQuery = {  ...query };
+    const updatedQuery = { ...query };
 
-    let customQuery = this.model.find(updatedQuery);
+    let customQuery =  this.model.find(updatedQuery);
 
     if (skip !== "" && limit !== "") {
-      customQuery = customQuery.limit(limit).skip(skip);
+      customQuery = customQuery.skip(skip).limit(limit);
     }
 
     if (sort) {

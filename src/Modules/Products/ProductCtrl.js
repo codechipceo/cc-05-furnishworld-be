@@ -15,9 +15,9 @@ const productCtrl = {
   }),
 
   updateImage: asyncHandler(async (req, res, next) => {
-    console.log(req.body);
+ 
     const productImageDTO = {
-      files: req.files.image,
+      files: req.files.files,
       ...req.params,
       ...req.body,
     };
@@ -33,7 +33,7 @@ const productCtrl = {
 
   deleteImage: asyncHandler(async (req, res, next) => {
     const productImageDTO = {
-      ...req.params,
+    ...req.body
     };
 
     const savedData = await productService.deleteImage(productImageDTO);

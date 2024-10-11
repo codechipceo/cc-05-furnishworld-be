@@ -9,7 +9,7 @@ productRouter.post("/getById", productCtrl.getById);
 productRouter.post("/update", productCtrl.update);
 productRouter.post("/delete", productCtrl.delete);
 
-productRouter.put("/:productId/images", productCtrl.updateImage);
-productRouter.delete("/:productId/images/:imageId", productCtrl.deleteImage);
+productRouter.post("/updateImage", productCtrl.updateImage);
+productRouter.post("/deleteProductImage", productCtrl.deleteImage);
 
 module.exports = productRouter;

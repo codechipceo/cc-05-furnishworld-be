@@ -45,7 +45,6 @@ module.exports = (error, req, res, next) => {
   error.status = error.status || "Error";
 
 
-  console.log("inside global")
   console.log(error)
   return res.status(error.statusCode).json({
     status: error.statusCode,

@@ -1,9 +1,21 @@
+const { model } = require("mongoose");
 const CustomError = require("../../Errors/CustomError.js");
 const successResponse = require("../../Utils/apiResponse.js");
 const asyncHandler = require("../../Utils/asyncHandler.js");
 const CategoryService = require("./categoryService.js");
 
 const categoryCtrl = {
+  updateCategoryImg: asyncHandler(async (req, res, next) => {
+    const categoryDto = {
+      ...req.body,
+      image: req.files.image,
+    };
+
+    const updatedCategory = await CategoryService.updateCategoryImage(
+      categoryDto
+    );
+    return successResponse({ res, data: updatedCategory });
+  }),
   create: asyncHandler(async (req, res, next) => {
     const categoryDTO = req.body;
     categoryDTO.files = req.files;
