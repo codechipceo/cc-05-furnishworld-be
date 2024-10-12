@@ -2,7 +2,11 @@ const User = require("./userModel");
 const DbService = require("../../Service/DbService");
 const serviceHandler = require("../../Utils/serviceHandler");
 const CustomError = require("../../Errors/CustomError");
-const { hashPassword, comparePasswords, generateToken } = require('../../Utils/utils');
+const {
+  hashPassword,
+  comparePasswords,
+  generateToken,
+} = require("../../Utils/utils");
 const bcrypt = require("bcryptjs");
 
 const model = new DbService(User);
@@ -12,17 +16,20 @@ const userService = {
     const { password, ...userData } = data;
     const hashedPassword = await hashPassword(password);
 
-    const savedData = await model.save({ ...userData, password: hashedPassword });
+    const savedData = await model.save({
+      ...userData,
+      password: hashedPassword,
+    });
 
     return savedData;
   }),
 
   getAll: serviceHandler(async (data) => {
     const query = { isDelete: false };
-   const savedData=await model.getAllDocuments(query,data)
-   const totalCount=await model.totalCounts({isDelete:false})
-  
-   return{savedData,totalCount}
+    const savedData = await model.getAllDocuments(query, data);
+    const totalCount = await model.totalCounts({ isDelete: false });
+
+    return { savedData, totalCount };
   }),
   getById: serviceHandler(async (dataId) => {
     const { userId } = dataId;
@@ -45,8 +52,8 @@ const userService = {
     );
     return deletedDoc;
   }),
-  signIn:serviceHandler(async(email,password)=>{
-    const filter={email}
+  signIn: serviceHandler(async (email, password) => {
+    const filter = { email };
     const user = await model.getDocument(filter);
 
     if (!user) {
@@ -57,9 +64,9 @@ const userService = {
     if (!isPasswordMatch) {
       throw new CustomError(401, "Incorrect password");
     }
-const token=generateToken(user)
-    return {token}
-  }  )
+    const token = generateToken(user);
+    return { token };
+  }),
 };
-const UserService=userService
+const UserService = userService;
 module.exports = UserService;
